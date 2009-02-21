@@ -1,4 +1,4 @@
-%w(error rules builder collector helpers).each do |f|
+%w(error rules builder collector helpers extensions/core).each do |f|
   require File.join(File.dirname(__FILE__), 'form_assistant', f)
 end
 
@@ -69,22 +69,23 @@ module RPH
       # get the error messages (if any) for a field
       def error_message_for(field)
         return nil unless has_errors?(field)
-        errors = object.errors[field]
-        full_messages_for(field)
-        # [field.to_s.humanize, (errors.is_a?(Array) ? errors.to_sentence : errors).to_s].join(' ')
+        
+        if RPH::FormAssistant::Rules.has_I18n_support?
+          full_messages_for(field)
+        else
+          errors = object.errors[field]
+          [[field.to_s.humanize, (errors.is_a?(Array) ? errors.to_sentence : errors).to_s].join(' ')]
+        end
       end
       
       # Returns full error messages for given field (uses I18n)
       def full_messages_for(field)
-        full_messages = []
-        attr_name     = object.class.human_attribute_name(field.to_s)
+        attr_name = object.class.human_attribute_name(field.to_s)
 
-        object.errors[field].each do |message|
+        object.errors[field].inject([]) do |full_messages, message|
           next unless message
           full_messages << attr_name + I18n.t('activerecord.errors.format.separator', :default => ' ') + message
         end
-        
-        full_messages
       end
       
       # returns true if a field is invalid
