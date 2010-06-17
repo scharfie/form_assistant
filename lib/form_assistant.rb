@@ -246,13 +246,18 @@ module RPH
         template_options = extract_options_for_template(self.fallback_template, options)
         label            = label_options[:label] === false ? nil : self.label(field, label_options.delete(:text), label_options)
         tip              = options.delete(:tip)
+        locals           = options.delete(:locals)
         required         = !!options.delete(:required)
 
-        element = without_assistance do
-          @template.capture(&block)
-        end  
+        if block_given?
+          element = without_assistance do
+            @template.capture(&block)
+          end  
+        else
+          element = nil
+        end    
         
-        partial = render_partial_for(element, field, label, tip, template_options[:template], 'widget', required, {}, args)
+        partial = render_partial_for(element, field, label, tip, template_options[:template], 'widget', required, locals, args)
         RPH::FormAssistant::Rules.binding_required? ? @template.concat(partial, block.binding) : @template.concat(partial)
       end
       
