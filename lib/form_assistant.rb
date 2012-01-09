@@ -72,19 +72,24 @@ module RPH
       end
       
       # get the error messages (if any) for a field
-      def error_message_for(field)
-        return nil unless has_errors?(field)
-        
-        errors = if RPH::FormAssistant::Rules.has_I18n_support?
-          full_messages_for(field)
-        else
-          human_field_name = field.to_s.humanize
-          errors = [*object.errors[field]].map do |error|
-            "#{human_field_name} #{error}"
-          end  
+      def error_message_for(fields)
+        errors = []
+        fields = [fields] unless Array === fields
+
+        fields.each do |field|
+          next unless has_errors?(field)
+          
+          errors += if RPH::FormAssistant::Rules.has_I18n_support?
+            full_messages_for(field)
+          else
+            human_field_name = field.to_s.humanize
+            errors += [*object.errors[field]].map do |error|
+              "#{human_field_name} #{error}"
+            end  
+          end
         end
-        
-        RPH::FormAssistant::FieldErrors.new(errors)
+
+        errors.empty? ? nil : RPH::FormAssistant::FieldErrors.new(errors)
       end
       
       # Returns full error messages for given field (uses I18n)
@@ -241,7 +246,9 @@ module RPH
     
       def widget(*args, &block)
         options          = args.extract_options!
-        field            = args.shift || nil 
+        fields           = args.shift || nil 
+        field            = Array === fields ? fields.first : fields
+        
         label_options    = extract_options_for_label(field, options)
         template_options = extract_options_for_template(self.fallback_template, options)
         label            = label_options[:label] === false ? nil : self.label(field, label_options.delete(:text), label_options)
@@ -257,7 +264,7 @@ module RPH
           element = nil
         end    
         
-        partial = render_partial_for(element, field, label, tip, template_options[:template], 'widget', required, locals, args)
+        partial = render_partial_for(element, fields, label, tip, template_options[:template], 'widget', required, locals, args)
         RPH::FormAssistant::Rules.binding_required? ? @template.concat(partial, block.binding) : @template.concat(partial)
       end
       

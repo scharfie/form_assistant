@@ -99,7 +99,7 @@ class FormAssistantTest < ActionView::TestCase
     expect_locals :errors => ['First name cannot be root']
     assert_kind_of RPH::FormAssistant::FieldErrors, locals[:errors]
   end
-  
+ 
   test "should render a field with a tip" do
     form.text_field :nickname, :tip => 'What should we call you?'
     expect_locals :tip => 'What should we call you?' 
@@ -158,6 +158,25 @@ class FormAssistantTest < ActionView::TestCase
       :helper => 'widget'
     
     expect_render :partial => template_path('field')  
+  end
+
+  test "should create widget with multiple fields" do
+    @address_book.errors.add(:first_name, 'cannot be root')
+    @address_book.errors.add(:nickname, 'cannot be batman')
+    
+    form.widget([:first_name, :nickname], :label => 'Names') do
+      concat @first_name = form.text_field(:first_name)
+      concat @nickname   = form.text_field(:nickname)
+    end
+
+    expect_locals :element => (@first_name + @nickname),
+      :errors => [
+        'First name cannot be root',
+        'Nickname cannot be batman'
+      ],
+      :helper => 'widget'
+
+    expect_render :partial => template_path('field')
   end
   
   test "should pass extra locals" do
