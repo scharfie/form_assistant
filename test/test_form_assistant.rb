@@ -1,4 +1,4 @@
-require 'test_helper'
+require 'helper'
 
 module FormAssistantHelpers
   attr_accessor :render_options
