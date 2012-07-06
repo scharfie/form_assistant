@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{form_assistant}
-  s.version = "1.0.0"
+  s.version = "1.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Ryan Heath", "Chris Scharf"]
@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
     "VERSION",
     "autotest/discover.rb",
     "autotest/testunit.rb",
+    "form_assistant.gemspec",
     "forms/_check_box.html.erb",
     "forms/_field.html.erb",
     "forms/_fieldset.html.erb",
