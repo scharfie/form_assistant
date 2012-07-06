@@ -42,7 +42,7 @@ module RPH
       cattr_accessor :template_root
       
       # used if no other template is available
-      attr_accessor_with_default :fallback_template, 'field'
+      attr_accessor :fallback_template
       
       # if set to true, none of the templates will be used;
       # however, labels can still be automatically attached
@@ -174,7 +174,7 @@ module RPH
           
         label_options
       end
-      
+
       def extract_options_for_template(helper_name, options={})
         template_options = {}
         
@@ -191,6 +191,10 @@ module RPH
       end  
     
     public
+      def fallback_template
+        @fallback_template ||= 'field'
+      end
+    
       def self.assist(helper_name)
         define_method(helper_name) do |field, *args|
           options          = (helper_name == 'check_box' ? args.shift : args.extract_options!) || {}
