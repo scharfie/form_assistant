@@ -36,41 +36,43 @@ module RPH
     #   # in config/intializers/form_assistant.rb
     #   ActionView::Base.default_form_builder = RPH::FormAssistant::FormBuilder
     class FormBuilder < ActionView::Helpers::FormBuilder
-      cattr_accessor :ignore_templates
-      cattr_accessor :ignore_labels
-      cattr_accessor :ignore_errors
-      cattr_accessor :template_root
-      
       # used if no other template is available
       attr_accessor :fallback_template
-      
-      # if set to true, none of the templates will be used;
-      # however, labels can still be automatically attached
-      # and all FormAssistant helpers are still avaialable
-      self.ignore_templates = false
-      
-      # if set to true, labels will become nil everywhere (both 
-      # with and without templates)
-      self.ignore_labels = false
-      
-      # set to true if you'd rather use #error_messages_for()
-      self.ignore_errors = false
 
-      # sets the root directory where templates will be searched
-      # note: the template root should be nested within the
-      # configured view path (which defaults to app/views)
-      self.template_root = File.join(Rails.configuration.view_path, 'forms')
-      
       # override the field_error_proc so that it no longer wraps the field
       # with <div class="fieldWithErrors">...</div>, but just returns the field
       ActionView::Base.field_error_proc = Proc.new { |html_tag, instance| html_tag }
-      
-    private
-      # render(:partial => '...') doesn't want the full path of the template
-      def self.template_root(full_path = false)
-        full_path ? @@template_root : @@template_root.gsub(Rails.configuration.view_path + '/', '')
+
+      class << self
+        attr_accessor :ignore_templates
+        attr_accessor :ignore_labels
+        attr_accessor :ignore_errors
+        attr_accessor :template_root
+
+        # if set to true, none of the templates will be used;
+        # however, labels can still be automatically attached
+        # and all FormAssistant helpers are still avaialable
+        @ignore_templates = false
+        
+        # if set to true, labels will become nil everywhere (both 
+        # with and without templates)
+        @ignore_labels = false
+        
+        # set to true if you'd rather use #error_messages_for()
+        @ignore_errors = false
+       
+        # sets the root directory where templates will be searched
+        # note: the template root should be nested within the
+        # configured view path (which defaults to app/views)
+        def template_root(full_path = false)
+          @template_root ||= File.join(Rails.configuration.view_path, 'forms')
+          
+          # render(:partial => '...') doesn't want the full path of the template
+          full_path ? @template_root : @template_root.gsub(Rails.configuration.view_path + '/', '')
+        end
       end
       
+    private
       # get the error messages (if any) for a field
       def error_message_for(fields)
         errors = []

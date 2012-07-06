@@ -18,8 +18,9 @@ $:.unshift(File.join(File.dirname(__FILE__), *%w[../lib]))
 require 'ostruct'
 require 'active_support'
 require 'action_controller'
+require 'active_support/test_case'
 # require 'action_controller/test_process'
-# require 'action_view/test_case'
+require 'action_view/test_case'
 require 'active_record'
 
 require 'mocha'
