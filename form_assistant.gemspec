@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{form_assistant}
-  s.version = "1.1.0"
+  s.version = "1.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Ryan Heath", "Chris Scharf"]
-  s.date = %q{2012-07-06}
+  s.date = %q{2012-07-07}
   s.description = %q{Custom form builder that attempts to make your forms friendly}
   s.email = %q{scharfie@gmail.com}
   s.extra_rdoc_files = [
@@ -34,12 +34,12 @@ Gem::Specification.new do |s|
     "forms/_radio_button.html.erb",
     "forms/_text_area.html.erb",
     "forms/_text_field.html.erb",
-    "init.rb",
-    "install.rb",
     "lib/form_assistant.rb",
     "lib/form_assistant/error.rb",
     "lib/form_assistant/field_errors.rb",
+    "lib/form_assistant/form_builder.rb",
     "lib/form_assistant/rules.rb",
+    "lib/form_assistant/view_helpers.rb",
     "tasks/form_assistant_tasks.rake",
     "test/forms/_field.html.erb",
     "test/forms/_fieldset.html.erb",
