@@ -67,7 +67,7 @@ end
 
 class FormAssistantTest < ActionView::TestCase
   include FormAssistantHelpers
-  include ::RPH::FormAssistant::ActionView
+  include ::RPH::FormAssistant::ViewHelpers
   attr_accessor :form
 
   def setup
@@ -76,6 +76,10 @@ class FormAssistantTest < ActionView::TestCase
     @address_book = AddressBook.new
     @form = RPH::FormAssistant::FormBuilder.new(:address_book, @address_book, self, {}, nil)
     RPH::FormAssistant::FormBuilder.template_root = File.expand_path(File.join(File.dirname(__FILE__), 'forms'))
+  end
+
+  test "should add helper methods" do
+    assert view.respond_to?(:form_assistant_for)
   end
   
   test "should use template based on input type" do
