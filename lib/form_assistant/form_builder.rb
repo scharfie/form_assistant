@@ -56,15 +56,23 @@ module RPH
         
         # set to true if you'd rather use #error_messages_for()
         @ignore_errors = false
+
+        def view_path
+          if Rails.configuration.respond_to?(:view_path)
+            return Rails.configuration.view_path
+          else
+            return Rails.configuration.paths['app/views'].first
+          end
+        end
        
         # sets the root directory where templates will be searched
         # note: the template root should be nested within the
         # configured view path (which defaults to app/views)
         def template_root(full_path = false)
-          @template_root ||= File.join(Rails.configuration.view_path, 'forms')
+          @template_root ||= File.join(view_path, 'forms')
           
           # render(:partial => '...') doesn't want the full path of the template
-          full_path ? @template_root : @template_root.gsub(Rails.configuration.view_path + '/', '')
+          full_path ? @template_root : @template_root.gsub(view_path, '')
         end
       end
       
