@@ -163,6 +163,47 @@ class FormAssistantTest < ActionView::TestCase
     
     expect_render :partial => template_path('field')  
   end
+  
+  test "should pass extra locals" do
+    form.text_field :first_name, :locals => { :nickname => true }
+    expect_locals :nickname => true
+  end
+  
+  test 'should create proper fields with #input' do
+    form.expects(:text_field).with(:first_name)
+    form.input :first_name
+    
+    form.expects(:check_box).with(:is_boy)
+    form.input :is_boy
+    
+    form.expects(:datetime_select).with(:created_at)
+    form.input :created_at
+  end
+  
+  test 'should create many fields with #inputs' do
+    options = { :required => true }
+    form.expects(:text_field).with(:first_name, options)
+    form.expects(:check_box).with(:is_boy, options)
+    form.expects(:datetime_select).with(:created_at, options)
+    form.inputs :first_name, :is_boy, :created_at, options
+  end
+  
+  test "should create widget" do
+    @address_book.errors.add(:birthday, 'is invalid')
+    
+    form.widget :birthday, :tip => 'Enter your birthday' do
+      concat @day   = form.select(:day,   (1..31))
+      concat @month = form.select(:month, (1..12))
+      concat @year  = form.select(:year,  (1975...1985))
+    end
+    
+    expect_locals :element => (@day + @month + @year),
+      :errors => ['Birthday is invalid'],
+      :tip    => 'Enter your birthday',
+      :helper => 'widget'
+    
+    expect_render :partial => template_path('field')  
+  end
 
   test "should create widget with multiple fields" do
     @address_book.errors.add(:first_name, 'cannot be root')
